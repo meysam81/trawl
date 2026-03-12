@@ -1,0 +1,112 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install deps
+        run: bun install --frozen-lockfile
+      - name: oxlint
+        run: bun run lint
+      - name: knip
+        run: bun run deadcode
+
+  typecheck:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install deps
+        run: bun install --frozen-lockfile
+      - name: Typecheck
+        run: bun run typecheck
+
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install deps
+        run: bun install --frozen-lockfile
+      - name: Build
+        run: bun run build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: error
+          name: trawl-${{ github.run_id }}-${{ github.run_attempt }}
+          path: dist
+
+  release-please:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release-please.outputs.releases_created }}
+      tag_name: ${{ steps.release-please.outputs.tag_name }}
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - id: release-please
+        name: Release please
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: node
+
+  publish:
+    if: needs.release-please.outputs.releases_created == 'true'
+    needs: [release-please, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install deps
+        run: bun install --frozen-lockfile
+      - name: Build
+        run: bun run build
+      - name: Add Chrome extension private key
+        env:
+          CHROME_SIGNING_PRIVATE_KEY: ${{ secrets.CHROME_SIGNING_PRIVATE_KEY }}
+        run: |
+          echo "$CHROME_SIGNING_PRIVATE_KEY" > chrome-webstore-privatekey.pem
+          chmod 400 chrome-webstore-privatekey.pem
+      - name: Sign Chrome extension
+        run: google-chrome --no-sandbox --pack-extension="$PWD/dist" --pack-extension-key=chrome-webstore-privatekey.pem
+      - name: Publish to Chrome Web Store
+        run: ./scripts/publish-chrome-webstore.sh
+        env:
+          CHROME_EXTENSION_ID: ${{ vars.CHROME_EXTENSION_ID }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          PUBLISH: "true"
+      - if: always()
+        name: Cleanup
+        run: rm -f chrome-webstore-privatekey.pem
