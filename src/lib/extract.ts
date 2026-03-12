@@ -21,6 +21,66 @@ const HTML_ENTITY_MAP: Record<string, string> = {
   "&period;": ".",
 };
 
+const FILE_EXTENSION_TLDS = new Set([
+  // images
+  "png",
+  "jpg",
+  "jpeg",
+  "gif",
+  "svg",
+  "webp",
+  "avif",
+  "ico",
+  "bmp",
+  "tiff",
+  // documents
+  "pdf",
+  "doc",
+  "docx",
+  "xls",
+  "xlsx",
+  "ppt",
+  "pptx",
+  // archives
+  "zip",
+  "tar",
+  "gz",
+  "rar",
+  "7z",
+  // media
+  "mp3",
+  "mp4",
+  "wav",
+  "avi",
+  "mov",
+  "mkv",
+  "webm",
+  // code/web
+  "css",
+  "js",
+  "ts",
+  "jsx",
+  "tsx",
+  "html",
+  "htm",
+  "xml",
+  "json",
+  "yaml",
+  "yml",
+  // fonts
+  "woff",
+  "woff2",
+  "ttf",
+  "eot",
+  "otf",
+  // build artifacts
+  "map",
+  "min",
+  "bundle",
+]);
+
+const RETINA_DENSITY_REGEX = /^\d+(\.\d+)?x\./;
+
 const PHONE_REGEX =
   /(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}|\+\d{1,3}[-.\s]?\d{4,14}/g;
 
@@ -136,7 +196,20 @@ function isValidEmail(email: string): boolean {
   if (tld.length < 2) {
     return false;
   }
+  if (FILE_EXTENSION_TLDS.has(tld)) {
+    return false;
+  }
+  if (RETINA_DENSITY_REGEX.test(domain)) {
+    return false;
+  }
   return true;
+}
+
+function stripImageContext(html: string): string {
+  return html
+    .replace(/<img[^>]*>/gi, "")
+    .replace(/<source[^>]*>/gi, "")
+    .replace(/srcset=["'][^"']*["']/gi, "");
 }
 
 interface ExtractOptions {
@@ -154,23 +227,24 @@ export interface ExtractedData {
 export function extractAll(options: ExtractOptions): ExtractedData {
   const { mode, html = "", text = "" } = options;
   const source = mode === "html" ? html : text;
+  const regexSource = mode === "html" ? stripImageContext(source) : source;
   const emailSet = new Set<string>();
 
-  // 1. Direct regex on source
-  const directMatches = source.match(EMAIL_REGEX) ?? [];
+  // 1. Direct regex on source (image tags stripped in HTML mode)
+  const directMatches = regexSource.match(EMAIL_REGEX) ?? [];
   for (const email of directMatches) {
     emailSet.add(email.toLowerCase());
   }
 
   // 2. Decode HTML entities then extract
-  const entityDecoded = decodeHtmlEntities(source);
+  const entityDecoded = decodeHtmlEntities(regexSource);
   const entityMatches = entityDecoded.match(EMAIL_REGEX) ?? [];
   for (const email of entityMatches) {
     emailSet.add(email.toLowerCase());
   }
 
   // 3. Decode obfuscations then extract
-  const deobfuscated = decodeObfuscations(source);
+  const deobfuscated = decodeObfuscations(regexSource);
   const deobfMatches = deobfuscated.match(EMAIL_REGEX) ?? [];
   for (const email of deobfMatches) {
     emailSet.add(email.toLowerCase());
