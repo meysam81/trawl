@@ -73,9 +73,9 @@ repos:
         pass_filenames: false
         entry: bunx tsc --noEmit
         types: [ts]
-      - id: deadcode
-        name: deadcode
+      - id: bun-check
+        name: bun-check
         language: system
         pass_filenames: false
-        entry: bunx knip
+        entry: bun run check
         always_run: true
