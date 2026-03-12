@@ -9,6 +9,7 @@
     "@types/bun": "latest",
     "@types/chrome": "^0.1.37",
     "knip": "^5.44.0",
+    "oxlint": "^1.54.0",
     "prettier": "^3.8.1",
     "vite": "^7.3.1"
   },
@@ -19,8 +20,7 @@
   "private": true,
   "scripts": {
     "build": "vite build",
-    "deadcode": "bunx knip",
-    "lint": "bunx oxlint",
+    "check": "oxlint --fix --fix-suggestions && knip",
     "start": "vite",
     "typecheck": "bunx tsc --noEmit"
   },

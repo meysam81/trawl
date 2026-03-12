@@ -1,5 +1,5 @@
 import { extractAll, type ExtractedData } from "../lib/extract.ts";
-import { saveScan, upsertEmail } from "../lib/storage.ts";
+import { saveScan, upsertEmail, getEmails } from "../lib/storage.ts";
 import { enrichEmail } from "../lib/intelligence.ts";
 import {
   guessEmailPatterns,
@@ -169,40 +169,60 @@ exportSelect.addEventListener("change", () => {
     return;
   }
 
-  const now = Date.now();
-  const records: EmailRecord[] = lastResult.emails.map((email) => ({
-    email,
-    domain: email.split("@")[1] ?? "",
-    firstSeen: now,
-    lastSeen: now,
-    sourceUrls: [],
-    tags: [],
-    notes: "",
-    starred: false,
-    type: "personal" as const,
-    provider: "custom" as const,
-    confidence: 50,
-    mxValid: null,
-  }));
+  getEmails()
+    .then((storedEmails) => {
+      const storedMap = new Map(storedEmails.map((r) => [r.email, r]));
+      const now = Date.now();
 
-  switch (format) {
-    case "csv":
-      downloadBlob(toCSV(records), "trawl-export.csv", "text/csv");
-      break;
-    case "json":
-      downloadBlob(toJSON(records), "trawl-export.json", "application/json");
-      break;
-    case "tsv":
-      navigator.clipboard
-        .writeText(toTabSeparated(records))
-        .catch((error: unknown) => log.warn("Clipboard write failed:", error));
-      break;
-    case "vcard":
-      downloadBlob(toVCard(records), "trawl-export.vcf", "text/vcard");
-      break;
-    default:
-      break;
-  }
+      const records: EmailRecord[] = lastResult.emails.map((email) => {
+        const stored = storedMap.get(email);
+        if (stored) {
+          return stored;
+        }
+        return {
+          email,
+          domain: email.split("@")[1] ?? "",
+          firstSeen: now,
+          lastSeen: now,
+          sourceUrls: [],
+          tags: [],
+          notes: "",
+          starred: false,
+          type: "personal" as const,
+          provider: "custom" as const,
+          confidence: 50,
+          mxValid: null,
+        };
+      });
+
+      switch (format) {
+        case "csv":
+          downloadBlob(toCSV(records), "trawl-export.csv", "text/csv");
+          break;
+        case "json":
+          downloadBlob(
+            toJSON(records),
+            "trawl-export.json",
+            "application/json",
+          );
+          break;
+        case "tsv":
+          navigator.clipboard
+            .writeText(toTabSeparated(records))
+            .catch((error: unknown) =>
+              log.warn("Clipboard write failed:", error),
+            );
+          break;
+        case "vcard":
+          downloadBlob(toVCard(records), "trawl-export.vcf", "text/vcard");
+          break;
+        default:
+          break;
+      }
+    })
+    .catch((error: unknown) =>
+      log.warn("Failed to load records for export:", error),
+    );
 
   // Reset select
   exportSelect.value = "";

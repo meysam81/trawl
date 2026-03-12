@@ -1,5 +1,14 @@
 import type { EmailRecord } from "./schemas.ts";
 
+const CSV_FORMULA_PREFIXES = ["=", "+", "-", "@"];
+
+function sanitizeCsvCell(value: string): string {
+  if (value.length > 0 && CSV_FORMULA_PREFIXES.includes(value[0]!)) {
+    return "\t" + value;
+  }
+  return value;
+}
+
 export function toCSV(
   records: EmailRecord[],
   columns?: Array<keyof EmailRecord>,
@@ -22,12 +31,15 @@ export function toCSV(
       .map((col) => {
         const value = record[col];
         if (Array.isArray(value)) {
-          return `"${value.join("; ")}"`;
+          const joined = sanitizeCsvCell(value.join("; "));
+          return `"${joined.replace(/"/g, '""')}"`;
         }
-        if (typeof value === "string" && value.includes(",")) {
-          return `"${value}"`;
+        const str = String(value ?? "");
+        const safe = sanitizeCsvCell(str);
+        if (safe.includes(",") || safe.includes('"') || safe.includes("\n")) {
+          return `"${safe.replace(/"/g, '""')}"`;
         }
-        return String(value ?? "");
+        return safe;
       })
       .join(","),
   );
@@ -43,11 +55,19 @@ export function toTabSeparated(records: EmailRecord[]): string {
   return records.map((r) => r.email).join("\t");
 }
 
+function escapeVCardValue(value: string): string {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\n/g, "\\n");
+}
+
 export function toVCard(records: EmailRecord[]): string {
   return records
     .map(
       (r) =>
-        `BEGIN:VCARD\nVERSION:3.0\nEMAIL:${r.email}\nNOTE:${r.notes}\nEND:VCARD`,
+        `BEGIN:VCARD\nVERSION:3.0\nEMAIL:${r.email}\nNOTE:${escapeVCardValue(r.notes)}\nEND:VCARD`,
     )
     .join("\n");
 }

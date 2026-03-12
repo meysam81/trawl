@@ -15,9 +15,13 @@ interface ExtractMessage {
 chrome.runtime.onMessage.addListener(
   (
     message: ExtractMessage,
-    _sender: chrome.runtime.MessageSender,
+    sender: chrome.runtime.MessageSender,
     sendResponse: (response: ExtractedData | { emails: string[] }) => void,
   ) => {
+    if (sender.id !== chrome.runtime.id) {
+      return false;
+    }
+
     if (message.type === "EXTRACT_PAGE") {
       const mode = message.mode ?? "html";
       const result = extractAll({

@@ -17,7 +17,7 @@ export const EmailRecordSchema = z.object({
   domain: z.string().min(1),
   firstSeen: z.number(),
   lastSeen: z.number(),
-  sourceUrls: z.array(z.string().url()),
+  sourceUrls: z.array(z.string().url().or(z.literal(""))),
   tags: z.array(z.string()),
   notes: z.string().default(""),
   starred: z.boolean().default(false),
@@ -30,7 +30,7 @@ export type EmailRecord = z.infer<typeof EmailRecordSchema>;
 
 export const ScanRecordSchema = z.object({
   id: z.string(),
-  url: z.string().url(),
+  url: z.string().url().or(z.literal("")),
   timestamp: z.number(),
   emailCount: z.number().int().min(0),
   emails: z.array(z.string().email()),

@@ -1,6 +1,7 @@
 import {
   getEmails,
   saveEmails,
+  upsertEmail,
   deleteEmail,
   getScans,
 } from "../lib/storage.ts";
@@ -279,7 +280,7 @@ async function toggleStar(email: string): Promise<void> {
     return;
   }
   record.starred = !record.starred;
-  await saveEmails(allEmails);
+  await upsertEmail(record);
   applyFilters();
   renderStats();
 }
@@ -365,7 +366,7 @@ async function handleNote(email: string): Promise<void> {
   const note = await showPromptDialog("Note for " + email + ":", record.notes);
   if (note !== null) {
     record.notes = note;
-    await saveEmails(allEmails);
+    await upsertEmail(record);
   }
 }
 
