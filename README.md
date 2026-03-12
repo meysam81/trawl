@@ -30,7 +30,7 @@ Then open `chrome://extensions`, enable Developer mode, and load the `dist/` dir
 
 ## Privacy
 
-No accounts. No telemetry. No cloud. All data is stored locally in `chrome.storage.local` and never transmitted anywhere except the domains you explicitly query (DNS over Google for MX lookups, GitHub API for commit emails, RDAP for WHOIS). Licensed under MIT.
+No accounts. No telemetry. No cloud. All data is stored locally in `chrome.storage.local` and never transmitted anywhere except the domains you explicitly query (DNS over Cloudflare/Google for MX lookups, GitHub API for commit emails, RDAP for WHOIS). Licensed under MIT.
 
 ## Development
 
@@ -41,6 +41,9 @@ bun run build       # production build to dist/
 bun run typecheck   # tsc --noEmit
 bun run lint        # oxlint
 bun run deadcode    # knip — unused exports/deps
+
+# Use Google DNS primary instead of Cloudflare (default)
+VITE_DNS_PRIMARY=google bun run build
 ```
 
 ## License

@@ -64,6 +64,55 @@ export function classifyEmailType(email: string): EmailType {
 const DOMAIN_RE =
   /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i;
 
+interface DnsProvider {
+  name: string;
+  buildUrl: (domain: string) => string;
+  headers?: Record<string, string>;
+}
+
+const DNS_PROVIDERS: Record<string, DnsProvider> = {
+  cloudflare: {
+    name: "Cloudflare",
+    buildUrl: (d) =>
+      `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(d)}&type=MX`,
+    headers: { Accept: "application/dns-json" },
+  },
+  google: {
+    name: "Google",
+    buildUrl: (d) =>
+      `https://dns.google/resolve?name=${encodeURIComponent(d)}&type=MX`,
+  },
+};
+
+const primaryKey =
+  (import.meta.env.VITE_DNS_PRIMARY as string)?.toLowerCase() === "google"
+    ? "google"
+    : "cloudflare";
+const fallbackKey = primaryKey === "cloudflare" ? "google" : "cloudflare";
+const DNS_PRIMARY = DNS_PROVIDERS[primaryKey]!;
+const DNS_FALLBACK = DNS_PROVIDERS[fallbackKey]!;
+
+async function fetchMxFromProvider(
+  provider: DnsProvider,
+  domain: string,
+): Promise<string[]> {
+  const response = await fetch(provider.buildUrl(domain), {
+    headers: provider.headers,
+  });
+  if (!response.ok) {
+    throw new Error(`${provider.name} MX lookup failed: ${response.status}`);
+  }
+
+  const data: unknown = await response.json();
+  const parsed = data as { Answer?: Array<{ data?: string }> };
+  return (parsed.Answer ?? [])
+    .map((a) => {
+      const parts = (a.data ?? "").split(" ");
+      return (parts[1] ?? "").replace(/\.$/, "").toLowerCase();
+    })
+    .filter(Boolean);
+}
+
 async function lookupMx(domain: string): Promise<string[]> {
   if (!DOMAIN_RE.test(domain)) {
     log.warn(`Invalid domain format for MX lookup: ${domain}`);
@@ -75,37 +124,34 @@ async function lookupMx(domain: string): Promise<string[]> {
     return cached.records;
   }
 
+  let records: string[];
   try {
-    const response = await fetch(
-      `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=MX`,
+    records = await fetchMxFromProvider(DNS_PRIMARY, domain);
+  } catch (primaryError) {
+    log.warn(
+      `${DNS_PRIMARY.name} DNS failed for ${domain}, trying ${DNS_FALLBACK.name}:`,
+      primaryError,
     );
-    if (!response.ok) {
-      log.warn(`MX lookup failed for ${domain}: ${response.status}`);
+    try {
+      records = await fetchMxFromProvider(DNS_FALLBACK, domain);
+    } catch (fallbackError) {
+      log.warn(
+        `${DNS_FALLBACK.name} DNS also failed for ${domain}:`,
+        fallbackError,
+      );
       return [];
     }
-
-    const data: unknown = await response.json();
-    const parsed = data as { Answer?: Array<{ data?: string }> };
-    const records = (parsed.Answer ?? [])
-      .map((a) => {
-        const parts = (a.data ?? "").split(" ");
-        return (parts[1] ?? "").replace(/\.$/, "").toLowerCase();
-      })
-      .filter(Boolean);
-
-    // Evict oldest entry if cache is full
-    if (mxCache.size >= MX_CACHE_MAX_SIZE) {
-      const oldestKey = mxCache.keys().next().value;
-      if (oldestKey !== undefined) {
-        mxCache.delete(oldestKey);
-      }
-    }
-    mxCache.set(domain, { records, timestamp: Date.now() });
-    return records;
-  } catch (error) {
-    log.warn(`MX lookup error for ${domain}:`, error);
-    return [];
   }
+
+  // Evict oldest entry if cache is full
+  if (mxCache.size >= MX_CACHE_MAX_SIZE) {
+    const oldestKey = mxCache.keys().next().value;
+    if (oldestKey !== undefined) {
+      mxCache.delete(oldestKey);
+    }
+  }
+  mxCache.set(domain, { records, timestamp: Date.now() });
+  return records;
 }
 
 function detectProvider(mxRecords: string[]): Provider {
