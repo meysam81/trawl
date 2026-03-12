@@ -61,7 +61,9 @@ runBtn.addEventListener("click", async () => {
 });
 
 copyBtn.addEventListener("click", () => {
-  if (!lastEmails.length) return;
+  if (!lastEmails.length) {
+    return;
+  }
   navigator.clipboard.writeText(lastEmails.join("\n"));
   copyBtn.textContent = "Copied!";
   copyBtn.classList.add("copied");
