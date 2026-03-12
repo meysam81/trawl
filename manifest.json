@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Email Collector",
-  "version": "1.1",
-  "description": "Collect email addresses from any web page.",
+  "name": "Trawl",
+  "version": "1.0.0",
+  "description": "Zero-cloud email intelligence. Extract, validate, and discover email addresses from any web page.",
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "src/popup/popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",
       "48": "icons/icon-48.png",
@@ -16,5 +16,36 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
-  "permissions": ["activeTab", "scripting"]
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "contextMenus",
+    "notifications",
+    "tabs"
+  ],
+  "background": {
+    "service_worker": "src/background/service-worker.ts"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/content/extractor.ts"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "extract-page": {
+      "suggested_key": {
+        "default": "Alt+E"
+      },
+      "description": "Extract emails from current page"
+    },
+    "open-dashboard": {
+      "suggested_key": {
+        "default": "Alt+D"
+      },
+      "description": "Open Trawl dashboard"
+    }
+  }
 }

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; connect-src https://dns.google https://api.github.com https://rdap.org"
+    />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="header">
+      <svg
+        class="logo"
+        viewBox="0 0 22 22"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect width="22" height="22" rx="5" fill="#6366f1" />
+        <path
+          d="M5 8l6 4.2L17 8M5 8v6h12V8H5z"
+          stroke="#fff"
+          stroke-width="1.4"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <span class="title">Trawl</span>
+      <span class="privacy-badge">100% local</span>
+    </div>
+
+    <div class="controls">
+      <select id="mode">
+        <option value="text">Visible text</option>
+        <option value="html">Full HTML source</option>
+      </select>
+      <button id="run">Collect</button>
+    </div>
+
+    <div class="results" id="results">
+      <div class="results-header">
+        <span class="badge" id="count"></span>
+        <div class="results-actions">
+          <button id="copy">Copy</button>
+          <select id="export-format" class="export-select">
+            <option value="" disabled selected>Export</option>
+            <option value="csv">CSV</option>
+            <option value="json">JSON</option>
+            <option value="tsv">Tab-separated</option>
+            <option value="vcard">vCard</option>
+          </select>
+        </div>
+      </div>
+      <pre id="out"></pre>
+    </div>
+
+    <div class="extras" id="extras"></div>
+
+    <details class="discovery-panel" id="discovery-panel">
+      <summary class="discovery-toggle">Discover contacts</summary>
+      <div class="discovery-content">
+        <div class="discovery-section">
+          <label class="discovery-label">Guess email patterns</label>
+          <div class="discovery-row">
+            <input
+              type="text"
+              id="disc-first"
+              placeholder="First name"
+              class="discovery-input"
+            />
+            <input
+              type="text"
+              id="disc-last"
+              placeholder="Last name"
+              class="discovery-input"
+            />
+          </div>
+          <button id="disc-guess" class="btn btn-sm">Generate</button>
+          <pre id="disc-guess-out" class="discovery-out"></pre>
+        </div>
+        <div class="discovery-section">
+          <label class="discovery-label">Role addresses for domain</label>
+          <button id="disc-roles" class="btn btn-sm">Show roles</button>
+          <pre id="disc-roles-out" class="discovery-out"></pre>
+        </div>
+        <div class="discovery-section">
+          <label class="discovery-label"
+            >Linked pages (contact/about/team)</label
+          >
+          <button id="disc-links" class="btn btn-sm">Scan links</button>
+          <pre id="disc-links-out" class="discovery-out"></pre>
+        </div>
+        <div class="discovery-section">
+          <label class="discovery-label">GitHub user emails</label>
+          <div class="discovery-row">
+            <input
+              type="text"
+              id="disc-github"
+              placeholder="GitHub username"
+              class="discovery-input"
+            />
+          </div>
+          <button id="disc-github-btn" class="btn btn-sm">Fetch</button>
+          <pre id="disc-github-out" class="discovery-out"></pre>
+        </div>
+      </div>
+    </details>
+
+    <details class="discovery-panel" id="page-intel-panel">
+      <summary class="discovery-toggle">Page intelligence</summary>
+      <div class="discovery-content">
+        <div class="discovery-section">
+          <label class="discovery-label">Page type</label>
+          <span id="page-type" class="page-intel-value">-</span>
+        </div>
+        <div class="discovery-section">
+          <label class="discovery-label">Social links</label>
+          <pre id="page-social" class="discovery-out"></pre>
+        </div>
+        <div class="discovery-section">
+          <label class="discovery-label">Related pages</label>
+          <pre id="page-related" class="discovery-out"></pre>
+        </div>
+        <div class="discovery-section">
+          <label class="discovery-label">Domain info (WHOIS)</label>
+          <button id="page-whois-btn" class="btn btn-sm">Lookup</button>
+          <pre id="page-whois" class="discovery-out"></pre>
+        </div>
+      </div>
+    </details>
+
+    <div class="footer">
+      <button id="dashboard" class="footer-btn">Dashboard</button>
+    </div>
+
+    <script type="module" src="popup.ts"></script>
+  </body>
+</html>

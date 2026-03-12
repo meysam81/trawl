@@ -1,0 +1,431 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: #fafafa;
+  color: #1e1e2e;
+  padding: 24px 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e2e8;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 28px;
+  height: 28px;
+}
+
+.dashboard-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.stats-bar {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: #6b6b80;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #1e1e2e;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1.5px solid #e2e2e8;
+  border-radius: 6px;
+  outline: none;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+
+.search-input:focus {
+  border-color: #6366f1;
+}
+
+.filter-select {
+  padding: 8px 10px;
+  font-size: 13px;
+  border: 1.5px solid #e2e2e8;
+  border-radius: 6px;
+  background: #fff;
+  color: #1e1e2e;
+  outline: none;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  border-color: #6366f1;
+}
+
+.bulk-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.btn {
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid #e2e2e8;
+  border-radius: 6px;
+  background: #fff;
+  color: #4b4b5e;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: #f0f0f5;
+  border-color: #c0c0cc;
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 11px;
+}
+
+.btn-primary {
+  background: #6366f1;
+  color: #fff;
+  border-color: #6366f1;
+}
+
+.btn-primary:hover {
+  background: #4f46e5;
+}
+
+.btn-danger {
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.btn-danger:hover {
+  background: #fef2f2;
+}
+
+/* Table */
+.email-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #e2e2e8;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.email-table thead {
+  background: #f8f8fb;
+}
+
+.email-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b6b80;
+  border-bottom: 1px solid #e2e2e8;
+}
+
+.email-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f5;
+  vertical-align: middle;
+}
+
+.email-table tr:last-child td {
+  border-bottom: none;
+}
+
+.email-table tr:hover td {
+  background: #fafafe;
+}
+
+.col-check {
+  width: 36px;
+  text-align: center;
+}
+
+.col-star {
+  width: 32px;
+  text-align: center;
+}
+
+.col-email {
+  min-width: 200px;
+}
+
+.col-domain {
+  min-width: 120px;
+}
+
+.col-type {
+  width: 90px;
+}
+
+.col-confidence {
+  width: 90px;
+}
+
+.col-tags {
+  min-width: 120px;
+}
+
+.col-seen {
+  width: 100px;
+}
+
+.col-actions {
+  width: 140px;
+}
+
+.email-cell {
+  font-family: "SF Mono", "Cascadia Code", monospace;
+  font-size: 12px;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+  color: #d0d0da;
+}
+
+.star-btn.starred {
+  color: #f59e0b;
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.type-personal {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.type-role {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.type-disposable {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.confidence-bar {
+  width: 60px;
+  height: 6px;
+  background: #e2e2e8;
+  border-radius: 3px;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+.confidence-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.confidence-high {
+  background: #16a34a;
+}
+
+.confidence-mid {
+  background: #f59e0b;
+}
+
+.confidence-low {
+  background: #dc2626;
+}
+
+.tag {
+  display: inline-block;
+  padding: 1px 6px;
+  margin: 1px 2px;
+  background: #f0f0f5;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #4b4b5e;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: #6b6b80;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.action-btn:hover {
+  background: #f0f0f5;
+  color: #1e1e2e;
+}
+
+/* Empty state */
+.empty-state {
+  display: none;
+  padding: 60px 24px;
+  text-align: center;
+  color: #9090a0;
+}
+
+.empty-state.visible {
+  display: block;
+}
+
+.empty-hint {
+  margin-top: 8px;
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* Recent scans */
+.recent-scans {
+  margin-top: 32px;
+}
+
+.recent-scans h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.scan-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid #e2e2e8;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.scan-url {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #4b4b5e;
+  font-family: "SF Mono", "Cascadia Code", monospace;
+  font-size: 12px;
+}
+
+.scan-meta {
+  display: flex;
+  gap: 12px;
+  color: #9090a0;
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+/* Tag input dialog */
+.tag-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 1px solid #e2e2e8;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  min-width: 300px;
+}
+
+.tag-dialog h3 {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.tag-dialog input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1.5px solid #e2e2e8;
+  border-radius: 6px;
+  outline: none;
+  margin-bottom: 12px;
+}
+
+.tag-dialog input:focus {
+  border-color: #6366f1;
+}
+
+.tag-dialog-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 99;
+}
+
+.hidden {
+  display: none;
+}

@@ -7,7 +7,7 @@
     "builtin": true
   },
   "plugins": ["import"],
-  "ignorePatterns": ["scripts/publish-chrome-webstore.js"],
+  "ignorePatterns": ["scripts/publish-chrome-webstore.js", "dist/**"],
   "rules": {
     "adjacent-overload-signatures": "deny",
     "anchor-ambiguous-text": "deny",

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; connect-src https://dns.google https://api.github.com https://rdap.org"
+    />
+    <title>Trawl Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <header class="dashboard-header">
+      <div class="header-left">
+        <svg
+          class="logo"
+          viewBox="0 0 22 22"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect width="22" height="22" rx="5" fill="#6366f1" />
+          <path
+            d="M5 8l6 4.2L17 8M5 8v6h12V8H5z"
+            stroke="#fff"
+            stroke-width="1.4"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <h1>Trawl</h1>
+      </div>
+      <div class="stats-bar" id="stats-bar"></div>
+    </header>
+
+    <div class="toolbar">
+      <input
+        type="search"
+        id="search"
+        placeholder="Search emails, domains, tags..."
+        class="search-input"
+      />
+      <select id="filter-domain" class="filter-select">
+        <option value="">All domains</option>
+      </select>
+      <select id="filter-type" class="filter-select">
+        <option value="">All types</option>
+        <option value="personal">Personal</option>
+        <option value="role">Role</option>
+        <option value="disposable">Disposable</option>
+      </select>
+      <div class="bulk-actions" id="bulk-actions">
+        <button class="btn btn-sm" id="bulk-delete">Delete selected</button>
+        <button class="btn btn-sm" id="bulk-tag">Tag selected</button>
+        <button class="btn btn-sm" id="bulk-export-csv">Export CSV</button>
+        <button class="btn btn-sm" id="bulk-export-json">Export JSON</button>
+        <button class="btn btn-sm" id="bulk-export-vcard">Export vCard</button>
+      </div>
+    </div>
+
+    <main>
+      <table class="email-table" id="email-table">
+        <thead>
+          <tr>
+            <th class="col-check">
+              <input type="checkbox" id="select-all" />
+            </th>
+            <th class="col-star"></th>
+            <th class="col-email">Email</th>
+            <th class="col-domain">Domain</th>
+            <th class="col-type">Type</th>
+            <th class="col-confidence">Confidence</th>
+            <th class="col-tags">Tags</th>
+            <th class="col-seen">Last seen</th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="email-tbody"></tbody>
+      </table>
+
+      <div class="empty-state" id="empty-state">
+        <p>No emails collected yet.</p>
+        <p class="empty-hint">
+          Click the Trawl extension icon on any page to start collecting.
+        </p>
+      </div>
+
+      <section class="recent-scans" id="recent-scans-section">
+        <h2>Recent scans</h2>
+        <div id="recent-scans"></div>
+      </section>
+    </main>
+
+    <script type="module" src="dashboard.ts"></script>
+  </body>
+</html>
