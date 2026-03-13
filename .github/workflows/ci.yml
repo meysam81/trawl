@@ -20,10 +20,8 @@ jobs:
         uses: oven-sh/setup-bun@v2
       - name: Install deps
         run: bun install --frozen-lockfile
-      - name: oxlint
-        run: bun run lint
-      - name: knip
-        run: bun run deadcode
+      - name: Run linters
+        run: bun run check
 
   typecheck:
     runs-on: ubuntu-latest
