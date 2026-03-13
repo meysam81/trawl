@@ -1,10 +1,5 @@
 import { extractAll, type ExtractedData } from "../lib/extract.ts";
-import {
-  getSettings,
-  saveScan,
-  upsertEmails,
-  getEmails,
-} from "../lib/storage.ts";
+import { getSettings, saveScan, upsertEmails } from "../lib/storage.ts";
 import { classifyEmailType } from "../lib/intelligence.ts";
 import log from "../lib/logger.ts";
 
@@ -243,13 +238,6 @@ async function extractFromTab(
       emailCount: result.emails.length,
       emails: result.emails,
     });
-
-    if (result.emails.length > 0) {
-      await showNotification(
-        `Found ${result.emails.length} email${result.emails.length > 1 ? "s" : ""}`,
-        tabUrl ?? "Unknown page",
-      );
-    }
   } catch (error) {
     log.warn("Failed to extract from tab:", error);
   }
@@ -263,10 +251,6 @@ async function autoScanTab(tabId: number, tabUrl: string): Promise<void> {
     }
 
     await updateBadge(tabId, result.emails.length);
-
-    const existingEmails = await getEmails();
-    const existingSet = new Set(existingEmails.map((e) => e.email));
-    const newEmails = result.emails.filter((e) => !existingSet.has(e));
 
     const now = Date.now();
     await saveScan({
@@ -296,13 +280,6 @@ async function autoScanTab(tabId: number, tabUrl: string): Promise<void> {
         };
       }),
     );
-
-    if (newEmails.length > 0) {
-      await showNotification(
-        `${newEmails.length} new email${newEmails.length > 1 ? "s" : ""} found`,
-        tabUrl,
-      );
-    }
   } catch (error) {
     log.debug("Auto-scan failed (expected on restricted pages):", error);
   }
@@ -317,19 +294,6 @@ async function updateBadge(tabId: number, count: number): Promise<void> {
 
 async function storeTemporaryResults(emails: string[]): Promise<void> {
   await chrome.storage.local.set({ _lastContextMenuResult: emails });
-}
-
-async function showNotification(title: string, message: string): Promise<void> {
-  try {
-    await chrome.notifications.create({
-      type: "basic",
-      iconUrl: chrome.runtime.getURL("icons/icon-128.png"),
-      title: `Trawl: ${title}`,
-      message,
-    });
-  } catch (error) {
-    log.debug("Notification failed:", error);
-  }
 }
 
 function getDomainFromUrl(url: string): string {

@@ -128,6 +128,48 @@
       </div>
     </details>
 
+    <details class="discovery-panel" id="settings-panel">
+      <summary class="discovery-toggle">Settings</summary>
+      <div class="discovery-content">
+        <div class="discovery-section">
+          <label class="toggle-row">
+            <input type="checkbox" id="auto-scan-toggle" />
+            <span class="toggle-switch"></span>
+            <span class="discovery-label" style="display: inline; margin: 0"
+              >Auto-scan pages</span
+            >
+          </label>
+          <div class="setting-hint">
+            Extract emails automatically when pages finish loading
+          </div>
+        </div>
+        <div class="discovery-section">
+          <label class="discovery-label">Allowlist domains</label>
+          <div class="setting-hint">
+            Only auto-scan these domains (one per line, leave empty for all)
+          </div>
+          <textarea
+            id="allowlist"
+            class="discovery-input domain-list"
+            rows="3"
+            placeholder="example.com&#10;company.org"
+          ></textarea>
+        </div>
+        <div class="discovery-section">
+          <label class="discovery-label">Blocklist domains</label>
+          <div class="setting-hint">
+            Never auto-scan these domains (one per line)
+          </div>
+          <textarea
+            id="blocklist"
+            class="discovery-input domain-list"
+            rows="3"
+            placeholder="internal.corp&#10;localhost"
+          ></textarea>
+        </div>
+      </div>
+    </details>
+
     <div class="footer">
       <button id="dashboard" class="footer-btn">Dashboard</button>
     </div>

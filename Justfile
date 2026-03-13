@@ -14,10 +14,15 @@ pack: build
         mv dist.pem chrome-webstore-privatekey.pem
         echo "Generated chrome-webstore-privatekey.pem — keep this safe and secret."
     fi
-    echo "Created dist.crx"
+    echo $PWD/dist.crx
 
 dist:
-    cd dist && zip ../dist.zip -r .
+    cd dist && zip ../dist.zip -r . && echo $PWD/dist.zip
 
 build:
     bun run build
+
+# Print CWS extension public key from local PEM
+cws-pubkey:
+    openssl rsa -in chrome-webstore-privatekey.pem -pubout -outform PEM 2>/dev/null
+    @echo

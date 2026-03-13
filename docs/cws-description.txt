@@ -1,0 +1,84 @@
+Trawl finds, validates, and exports email addresses from any web page — with zero cloud dependency. All data stays in your browser. No accounts, no API keys, no subscriptions, no usage limits.
+
+Install Trawl and start extracting verified email addresses in seconds.
+
+
+WHAT TRAWL DOES
+
+Trawl is a complete email intelligence pipeline built into a single Chrome extension. It extracts email addresses from web pages, validates them with real MX record checks, discovers new contacts through pattern generation, and exports everything in multiple formats — all without sending your data to any external server.
+
+
+KEY FEATURES
+
+- Multi-layer email extraction — Finds emails hidden behind obfuscation ([at], {dot}), HTML entities, mailto links, JSON-LD structured data, and data attributes. Filters out false positives like image filenames automatically.
+
+- MX record validation — Verifies every email address against real DNS records using DNS-over-HTTPS. Detects disposable domains (43+ providers). Assigns a confidence score from 0 to 100 for each address.
+
+- Email discovery — Generates candidate email addresses from a person's name using 7 common patterns (first.last@, flast@, and more). Produces 14 standard role addresses (info@, support@, careers@). Fetches public commit emails from GitHub.
+
+- Smart export — CSV with formula injection protection, JSON, vCard, and clipboard copy. One-click compose links for Gmail and Outlook. Download any format directly from the popup or dashboard.
+
+- Full dashboard — Search, filter by domain or type, bulk operations, tagging, notes, starring, and scan history. Manage your contacts like a CRM — without the CRM.
+
+- Auto-scan — Extracts emails automatically as you browse. Set domain allowlists and blocklists. Badge counter shows discovered emails per page.
+
+- Page intelligence — Classifies pages by type (company, blog, directory, e-commerce, personal, government, education). Extracts social links from 6 platforms. Performs RDAP/WHOIS domain lookups for registrar, creation date, and expiry.
+
+- Phone numbers and social profiles — Extracts phone numbers and social media URLs (LinkedIn, Twitter/X, GitHub, Facebook, Instagram, YouTube) alongside email addresses.
+
+
+WHO IS TRAWL FOR
+
+- Sales professionals building prospect lists from company websites
+- Recruiters finding candidate contact information
+- Journalists and researchers gathering source emails
+- Marketers compiling outreach lists from industry pages
+- Developers extracting structured contact data from the web
+- Anyone who needs email addresses without paying for a SaaS subscription
+
+
+HOW IT WORKS
+
+1. Visit any web page
+2. Click the Trawl icon or press Alt+E
+3. Trawl scans the page and extracts all email addresses
+4. Each address is validated with MX record checks and scored 0-100
+5. Export to CSV, JSON, vCard, or compose directly in Gmail/Outlook
+
+You can also right-click selected text to extract emails, or enable auto-scan to extract from every page you visit.
+
+
+KEYBOARD SHORTCUTS
+
+- Alt+E — Extract emails from current page
+- Alt+D — Open Trawl dashboard
+- Right-click — Extract from selected text
+
+
+PRIVACY AND PERMISSIONS
+
+Trawl is built with a zero-cloud architecture. Your data never leaves your browser.
+
+- No accounts required
+- No telemetry or analytics
+- No cloud storage or sync
+- All data stored locally in Chrome's encrypted storage
+
+The only external network requests Trawl makes are:
+- DNS-over-HTTPS queries (Cloudflare/Google) for MX record validation
+- GitHub API for public commit email lookups
+- RDAP for domain registration information
+
+Trawl is fully open source. You can audit every line of code on GitHub.
+
+
+PERMISSIONS EXPLAINED
+
+- activeTab — Read the current page to extract emails
+- scripting — Inject the extraction script into pages
+- storage — Save extracted emails locally in your browser
+- contextMenus — Add "Extract emails" to the right-click menu
+- tabs — Detect page navigation for auto-scan
+
+
+Install Trawl today and take control of your email prospecting — privately, locally, and without limits.

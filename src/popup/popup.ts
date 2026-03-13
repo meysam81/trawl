@@ -1,5 +1,11 @@
 import { extractAll, type ExtractedData } from "../lib/extract.ts";
-import { saveScan, upsertEmail, getEmails } from "../lib/storage.ts";
+import {
+  saveScan,
+  upsertEmail,
+  getEmails,
+  getSettings,
+  saveSettings,
+} from "../lib/storage.ts";
 import { enrichEmail } from "../lib/intelligence.ts";
 import {
   guessEmailPatterns,
@@ -450,4 +456,44 @@ pageWhoisBtn.addEventListener("click", async () => {
     `Expires: ${info.expiryDate ?? "unknown"}`,
   ];
   pageWhoisEl.textContent = lines.join("\n");
+});
+
+// Settings panel
+const autoScanToggle = document.getElementById(
+  "auto-scan-toggle",
+) as HTMLInputElement;
+const allowlistEl = document.getElementById("allowlist") as HTMLTextAreaElement;
+const blocklistEl = document.getElementById("blocklist") as HTMLTextAreaElement;
+
+function parseDomainList(text: string): string[] {
+  return text
+    .split("\n")
+    .map((d) => d.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+// Load settings on popup open
+(async () => {
+  const settings = await getSettings();
+  autoScanToggle.checked = settings.autoScan;
+  allowlistEl.value = settings.allowlist.join("\n");
+  blocklistEl.value = settings.blocklist.join("\n");
+})().catch((error: unknown) => log.warn("Failed to load settings:", error));
+
+autoScanToggle.addEventListener("change", async () => {
+  const s = await getSettings();
+  s.autoScan = autoScanToggle.checked;
+  await saveSettings(s);
+});
+
+allowlistEl.addEventListener("change", async () => {
+  const s = await getSettings();
+  s.allowlist = parseDomainList(allowlistEl.value);
+  await saveSettings(s);
+});
+
+blocklistEl.addEventListener("change", async () => {
+  const s = await getSettings();
+  s.blocklist = parseDomainList(blocklistEl.value);
+  await saveSettings(s);
 });

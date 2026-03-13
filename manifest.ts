@@ -3,7 +3,7 @@ import pkg from "./package.json";
 
 export default defineManifest({
   manifest_version: 3,
-  name: "Trawl",
+  name: "Trawl — Email Finder & Extractor",
   version: pkg.version,
   description:
     "Zero-cloud email intelligence. Extract, validate, and discover email addresses from any web page.",
@@ -20,14 +20,7 @@ export default defineManifest({
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png",
   },
-  permissions: [
-    "activeTab",
-    "scripting",
-    "storage",
-    "contextMenus",
-    "notifications",
-    "tabs",
-  ],
+  permissions: ["activeTab", "scripting", "storage", "contextMenus", "tabs"],
   background: {
     service_worker: "src/background/service-worker.ts",
   },

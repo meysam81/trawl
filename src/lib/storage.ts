@@ -109,6 +109,10 @@ export async function getSettings(): Promise<Settings> {
   };
 }
 
+export async function saveSettings(settings: Settings): Promise<void> {
+  await chrome.storage.local.set({ [STORAGE_KEYS.settings]: settings });
+}
+
 async function ensureQuota(): Promise<void> {
   const bytesUsed = await chrome.storage.local.getBytesInUse();
   if (bytesUsed > QUOTA_WARNING_BYTES) {
