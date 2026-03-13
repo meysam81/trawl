@@ -20,7 +20,7 @@
 
 Zero-cloud email intelligence for Chrome. Extract, validate, and discover email addresses from any web page — no accounts, no subscriptions, no Hunter/Apollo/Snov.io required.
 
-![Trawl Dashboard](screenshots/dash.png)
+![Trawl Dashboard](./assets/dashboard.png)
 
 ## Why Trawl?
 
