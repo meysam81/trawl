@@ -127,11 +127,21 @@ function populateDomainFilter(): void {
   filterDomain.value = current;
 }
 
+function syncSelectAll(): void {
+  const total = filteredEmails.length;
+  const selected = filteredEmails.filter((e) =>
+    selectedEmails.has(e.email),
+  ).length;
+  selectAll.checked = total > 0 && selected === total;
+  selectAll.indeterminate = selected > 0 && selected < total;
+}
+
 function renderTable(): void {
   emailTbody.replaceChildren();
 
   if (filteredEmails.length === 0) {
     emptyState.classList.add("visible");
+    syncSelectAll();
     return;
   }
 
@@ -152,6 +162,7 @@ function renderTable(): void {
       } else {
         selectedEmails.delete(record.email);
       }
+      syncSelectAll();
     });
     checkTd.append(checkbox);
     tr.append(checkTd);
@@ -244,6 +255,8 @@ function renderTable(): void {
 
     emailTbody.append(tr);
   }
+
+  syncSelectAll();
 }
 
 function createActionBtn(
@@ -358,6 +371,57 @@ function showPromptDialog(
   });
 }
 
+function showConfirmDialog(message: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const overlay = document.createElement("div");
+    overlay.style.cssText =
+      "position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:9999";
+
+    const dialog = document.createElement("div");
+    dialog.style.cssText =
+      "background:#fff;border-radius:8px;padding:20px;min-width:340px;box-shadow:0 8px 32px rgba(0,0,0,0.2)";
+
+    const label = document.createElement("p");
+    label.textContent = message;
+    label.style.cssText = "margin:0 0 12px;font-size:14px;color:#2d2d2d";
+
+    const btnRow = document.createElement("div");
+    btnRow.style.cssText =
+      "display:flex;gap:8px;justify-content:flex-end;margin-top:12px";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.textContent = "Cancel";
+    cancelBtn.style.cssText =
+      "padding:6px 16px;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer";
+
+    const okBtn = document.createElement("button");
+    okBtn.textContent = "Delete";
+    okBtn.style.cssText =
+      "padding:6px 16px;border:none;border-radius:4px;background:#ef4444;color:#fff;cursor:pointer";
+
+    cancelBtn.addEventListener("click", () => {
+      overlay.remove();
+      resolve(false);
+    });
+    okBtn.addEventListener("click", () => {
+      overlay.remove();
+      resolve(true);
+    });
+    overlay.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        overlay.remove();
+        resolve(false);
+      }
+    });
+
+    btnRow.append(cancelBtn, okBtn);
+    dialog.append(label, btnRow);
+    overlay.append(dialog);
+    document.body.append(overlay);
+    okBtn.focus();
+  });
+}
+
 async function handleNote(email: string): Promise<void> {
   const record = allEmails.find((e) => e.email === email);
   if (!record) {
@@ -437,13 +501,33 @@ bulkDeleteBtn.addEventListener("click", () => {
   if (selectedEmails.size === 0) {
     return;
   }
-  Promise.allSettled([...selectedEmails].map((email) => deleteEmail(email)))
-    .then(() => {
-      allEmails = allEmails.filter((e) => !selectedEmails.has(e.email));
-      selectedEmails.clear();
-      applyFilters();
-      renderStats();
-      populateDomainFilter();
+  const count = selectedEmails.size;
+  showConfirmDialog(
+    `Delete ${count} email${count > 1 ? "s" : ""}? This cannot be undone.`,
+  )
+    .then((confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+      return Promise.allSettled(
+        [...selectedEmails].map((email) => deleteEmail(email)),
+      ).then(() => {
+        allEmails = allEmails.filter((e) => !selectedEmails.has(e.email));
+        selectedEmails.clear();
+        selectAll.checked = false;
+        applyFilters();
+        renderStats();
+        populateDomainFilter();
+        if (
+          filteredEmails.length === 0 &&
+          (searchInput.value || filterDomain.value || filterType.value)
+        ) {
+          searchInput.value = "";
+          filterDomain.value = "";
+          filterType.value = "";
+          applyFilters();
+        }
+      });
     })
     .catch((error: unknown) => log.warn("Bulk delete failed:", error));
 });
