@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/meysam81/trawl/compare/v1.0.1...v1.0.2) (2026-03-18)
+
+
+### Bug Fixes
+
+* **CI:** use go-crx3 for signing the dist ([0db393f](https://github.com/meysam81/trawl/commit/0db393fd62a555f64c622c30e0df0be5a2ae2eba))
+
 ## 1.0.1 (2026-03-18)
 
 
