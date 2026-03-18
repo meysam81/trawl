@@ -40,3 +40,5 @@ ignore
 screenshots
 files.txt
 *.zip
+*.bk
+.secrets

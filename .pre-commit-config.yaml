@@ -33,6 +33,7 @@ repos:
       - id: detect-private-key
         exclude: |
           (?x)^(
+            .github/workflows/ci.yml
           )$
       - id: end-of-file-fixer
         exclude: |

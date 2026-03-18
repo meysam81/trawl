@@ -41,6 +41,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      artifact-name: ${{ steps.output.outputs.artifact-name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -56,6 +58,10 @@ jobs:
           if-no-files-found: error
           name: trawl-${{ github.run_id }}-${{ github.run_attempt }}
           path: dist
+      - name: Output artifact name
+        id: output
+        run: |
+          echo "artifact-name=trawl-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
 
   release-please:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -79,26 +85,45 @@ jobs:
     needs: [release-please, build]
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-      - name: Install deps
-        run: bun install --frozen-lockfile
-      - name: Build
-        run: bun run build
-      - name: Add Chrome extension private key
+      - name: Download build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.build.outputs.artifact-name }}
+          path: dist
+      - name: Install crx3
+        run: |
+          go install github.com/mediabuyerbot/go-crx3/crx3@latest
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Write signing key
         env:
           CHROME_SIGNING_PRIVATE_KEY: ${{ secrets.CHROME_SIGNING_PRIVATE_KEY }}
         run: |
-          echo "$CHROME_SIGNING_PRIVATE_KEY" > chrome-webstore-privatekey.pem
-          chmod 400 chrome-webstore-privatekey.pem
+          echo "$CHROME_SIGNING_PRIVATE_KEY" > key.pem
+          chmod 400 key.pem
+          head -1 key.pem | grep -q "BEGIN PRIVATE KEY" || {
+            echo "ERROR: key is not PKCS#8 format (expected '-----BEGIN PRIVATE KEY-----')"
+            echo "Convert with: openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in old.pem -out new.pem"
+            exit 1
+          }
       - name: Sign Chrome extension
-        run: google-chrome --no-sandbox --pack-extension="$PWD/dist" --pack-extension-key=chrome-webstore-privatekey.pem
+        run: |
+          crx3 pack dist -p key.pem -o trawl.crx
+          ls -lh trawl.crx
+      - name: Create ZIP for Chrome Web Store
+        run: |
+          (cd dist && zip -r ../trawl.zip .)
+          ls -lh trawl.zip
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
+        run: gh release upload "$TAG_NAME" trawl.crx trawl.zip --clobber
       - name: Publish to Chrome Web Store
-        run: ./scripts/publish-chrome-webstore.sh
+        run: ./scripts/publish-chrome-webstore.sh trawl.crx
         env:
           CHROME_EXTENSION_ID: ${{ vars.CHROME_EXTENSION_ID }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
@@ -107,4 +132,4 @@ jobs:
           PUBLISH: "true"
       - if: always()
         name: Cleanup
-        run: rm -f chrome-webstore-privatekey.pem
+        run: rm -f key.pem

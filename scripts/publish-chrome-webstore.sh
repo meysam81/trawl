@@ -12,11 +12,11 @@ set -euo pipefail
 : "${GOOGLE_REFRESH_TOKEN:?Missing GOOGLE_REFRESH_TOKEN}"
 : "${CHROME_EXTENSION_ID:?Missing CHROME_EXTENSION_ID}"
 
-ZIP_FILE="${1:-dist.crx}"
+ZIP_FILE="${1:-trawl.crx}"
 
 if [[ ! -f "$ZIP_FILE" ]]; then
   # Fallback: zip the dist directory
-  ZIP_FILE="dist.zip"
+  ZIP_FILE="trawl.zip"
   (cd dist && zip -r "../$ZIP_FILE" .)
 fi
 
