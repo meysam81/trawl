@@ -12,12 +12,11 @@ set -euo pipefail
 : "${GOOGLE_REFRESH_TOKEN:?Missing GOOGLE_REFRESH_TOKEN}"
 : "${CHROME_EXTENSION_ID:?Missing CHROME_EXTENSION_ID}"
 
-ZIP_FILE="${1:-trawl.crx}"
+CRX_FILE="${1:-trawl.crx}"
 
-if [[ ! -f "$ZIP_FILE" ]]; then
-  # Fallback: zip the dist directory
-  ZIP_FILE="trawl.zip"
-  (cd dist && zip -r "../$ZIP_FILE" .)
+if [[ ! -f "$CRX_FILE" ]]; then
+  echo "ERROR: CRX file not found: $CRX_FILE"
+  exit 1
 fi
 
 echo "--- Obtaining access token ---"
@@ -37,15 +36,16 @@ UPLOAD_RESPONSE=$(curl -s \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "x-goog-api-version: 2" \
   -X PUT \
-  -T "$ZIP_FILE" \
+  -F "uploadType=media" \
+  -F "file=@$CRX_FILE" \
   "https://www.googleapis.com/upload/chromewebstore/v1.1/items/$CHROME_EXTENSION_ID")
 
 UPLOAD_STATUS=$(echo "$UPLOAD_RESPONSE" | jq -r '.uploadState')
 echo "Upload status: $UPLOAD_STATUS"
+echo "$UPLOAD_RESPONSE" | jq .
 
 if [[ "$UPLOAD_STATUS" != "SUCCESS" ]]; then
   echo "ERROR: Upload failed"
-  echo "$UPLOAD_RESPONSE" | jq .
   exit 1
 fi
 
@@ -54,16 +54,15 @@ if [[ "${PUBLISH:-false}" == "true" ]]; then
   PUBLISH_RESPONSE=$(curl -s \
     -H "Authorization: Bearer $ACCESS_TOKEN" \
     -H "x-goog-api-version: 2" \
-    -H "Content-Length: 0" \
     -X POST \
     "https://www.googleapis.com/chromewebstore/v1.1/items/$CHROME_EXTENSION_ID/publish")
 
   PUBLISH_STATUS=$(echo "$PUBLISH_RESPONSE" | jq -r '.status[0]')
   echo "Publish status: $PUBLISH_STATUS"
+  echo "$PUBLISH_RESPONSE" | jq .
 
   if [[ "$PUBLISH_STATUS" != "OK" ]]; then
     echo "WARNING: Publish may have issues"
-    echo "$PUBLISH_RESPONSE" | jq .
   fi
 fi
 
