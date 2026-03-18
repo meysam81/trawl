@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/meysam81/trawl/compare/v1.0.2...v1.0.3) (2026-03-18)
+
+
+### Bug Fixes
+
+* **CI:** use file mode in curl when uploading to CWS ([b8764e1](https://github.com/meysam81/trawl/commit/b8764e10fc17e73cedcf21e28677d06773f38c18))
+
 ## [1.0.2](https://github.com/meysam81/trawl/compare/v1.0.1...v1.0.2) (2026-03-18)
 
 
