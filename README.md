@@ -6,7 +6,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/meysam81/trawl)](https://github.com/meysam81/trawl/stargazers)
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/oceiggipjdnciogokidgkopppgmlobmg?logo=googlechrome&logoColor=white&label=Chrome%20Web%20Store)](https://chromewebstore.google.com/detail/oceiggipjdnciogokidgkopppgmlobmg?utm_source=github&utm_medium=readme&utm_campaign=badge)
-[![Extension Users](https://img.shields.io/chrome-web-store/users/oceiggipjdnciogokidgkopppgmlobmg?logo=googlechrome&logoColor=white&label=Extension%20Users)](https://chromewebstore.google.com/detail/oceiggipjdnciogokidgkopppgmlobmg?utm_source=github&utm_medium=readme&utm_campaign=badge)
+[![Extension Users](https://img.shields.io/chrome-web-store/users/oceiggipjdnciogokidgkopppgmlobmg?logo=googlechrome&logoColor=white&label=Extension%20Users)](https://chromewebstore.google.com/detail/oceiggipjdnciogokidgkopppgmlobmg?utm_source=github&utm_medium=readme&utm_campaign=ext_users)
 [![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4?logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/mv3/)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
