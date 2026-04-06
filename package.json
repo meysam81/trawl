@@ -8,7 +8,7 @@
     "@crxjs/vite-plugin": "^2.4.0",
     "@types/bun": "^1.3.10",
     "@types/chrome": "^0.1.38",
-    "knip": "^5.88.0",
+    "knip": "^6.0.0",
     "oxlint": "^1.56.0",
     "prettier": "^3.8.1",
     "vite": "^8.0.0"
