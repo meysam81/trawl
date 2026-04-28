@@ -1,23 +1,27 @@
 # Trawl
 
-[![CI](https://github.com/meysam81/trawl/actions/workflows/ci.yml/badge.svg)](https://github.com/meysam81/trawl/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![GitHub release](https://img.shields.io/github/v/release/meysam81/trawl)](https://github.com/meysam81/trawl/releases)
-[![GitHub stars](https://img.shields.io/github/stars/meysam81/trawl)](https://github.com/meysam81/trawl/stargazers)
+[![CI](https://img.shields.io/github/actions/workflow/status/meysam81/trawl/ci.yml?branch=main&label=CI&logo=githubactions&logoColor=white&style=flat-square)](https://github.com/meysam81/trawl/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/meysam81/trawl?logo=github&label=release&style=flat-square)](https://github.com/meysam81/trawl/releases)
+[![Stars](https://img.shields.io/github/stars/meysam81/trawl?logo=github&style=flat-square)](https://github.com/meysam81/trawl/stargazers)
+[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/meysam81/trawl?style=flat-square&label=Scorecard&logo=securityscorecard&logoColor=white)](https://scorecard.dev/viewer/?uri=github.com/meysam81/trawl)
 
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/oceiggipjdnciogokidgkopppgmlobmg?logo=googlechrome&logoColor=white&label=Chrome%20Web%20Store)](https://chromewebstore.google.com/detail/oceiggipjdnciogokidgkopppgmlobmg?utm_source=github&utm_medium=readme&utm_campaign=badge)
-[![Extension Users](https://img.shields.io/chrome-web-store/users/oceiggipjdnciogokidgkopppgmlobmg?logo=googlechrome&logoColor=white&label=Extension%20Users)](https://chromewebstore.google.com/detail/oceiggipjdnciogokidgkopppgmlobmg?utm_source=github&utm_medium=readme&utm_campaign=ext_users)
-[![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4?logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/mv3/)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/oceiggipjdnciogokidgkopppgmlobmg?logo=googlechrome&logoColor=white&label=Chrome%20Web%20Store&style=flat-square)](https://chromewebstore.google.com/detail/oceiggipjdnciogokidgkopppgmlobmg?utm_source=github&utm_medium=readme&utm_campaign=badge)
+[![CWS Users](https://img.shields.io/chrome-web-store/users/oceiggipjdnciogokidgkopppgmlobmg?logo=googlechrome&logoColor=white&label=users&style=flat-square)](https://chromewebstore.google.com/detail/oceiggipjdnciogokidgkopppgmlobmg)
+[![CWS Rating](https://img.shields.io/chrome-web-store/rating/oceiggipjdnciogokidgkopppgmlobmg?logo=googlechrome&logoColor=white&label=rating&style=flat-square)](https://chromewebstore.google.com/detail/oceiggipjdnciogokidgkopppgmlobmg)
+[![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4?logo=googlechrome&logoColor=white&style=flat-square)](https://developer.chrome.com/docs/extensions/mv3/)
 
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
-[![Bun](https://img.shields.io/badge/Bun-runtime-f9f1e1?logo=bun&logoColor=black)](https://bun.sh/)
-[![Zod](https://img.shields.io/badge/Zod-4-3E67B1?logo=zod&logoColor=white)](https://zod.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white&style=flat-square)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white&style=flat-square)](https://vite.dev/)
+[![Bun](https://img.shields.io/badge/Bun-runtime-f9f1e1?logo=bun&logoColor=black&style=flat-square)](https://bun.sh/)
+[![Zod](https://img.shields.io/badge/Zod-4-3E67B1?logo=zod&logoColor=white&style=flat-square)](https://zod.dev/)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-FE5196?logo=conventionalcommits&logoColor=white&style=flat-square)](https://www.conventionalcommits.org)
+[![Renovate](https://img.shields.io/badge/renovate-enabled-1f8b4c?logo=renovatebot&logoColor=white&style=flat-square)](https://developer.mend.io/github/meysam81/trawl)
 
-[![Zero Cloud](https://img.shields.io/badge/Zero%20Cloud-local%20only-2ea44f)](#privacy)
-[![Privacy First](https://img.shields.io/badge/Privacy%20First-no%20telemetry-8A2BE2)](#privacy)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/meysam81/trawl/pulls)
-[![Sponsor](https://img.shields.io/badge/Sponsor-❤-ea4aaa)](https://github.com/sponsors/meysam81)
+[![Zero Cloud](https://img.shields.io/badge/Zero%20Cloud-local%20only-2ea44f?style=flat-square)](#privacy)
+[![Privacy First](https://img.shields.io/badge/Privacy%20First-no%20telemetry-8A2BE2?style=flat-square)](#privacy)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](https://github.com/meysam81/trawl/pulls)
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ea4aaa?logo=githubsponsors&logoColor=white&style=flat-square)](https://github.com/sponsors/meysam81)
 
 ---
 
@@ -101,7 +105,7 @@ Then open `chrome://extensions`, enable Developer mode, and load the `dist/` dir
 
 ## Architecture
 
-```
+```plaintext
 Popup ──→ Lib Modules ←── Dashboard
                ↑
 Service Worker ←→ Content Script
