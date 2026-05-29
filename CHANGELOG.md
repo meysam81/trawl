@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/meysam81/trawl/compare/v1.0.3...v1.1.0) (2026-05-29)
+
+
+### Features
+
+* add URL extraction ([71f7c26](https://github.com/meysam81/trawl/commit/71f7c2648fd69f0693057ce7e6b90214579f5d2d))
+
 ## [1.0.3](https://github.com/meysam81/trawl/compare/v1.0.2...v1.0.3) (2026-03-18)
 
 
