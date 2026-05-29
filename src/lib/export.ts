@@ -1,4 +1,4 @@
-import type { EmailRecord } from "./schemas.ts";
+import type { EmailRecord, UrlRecord } from "./schemas.ts";
 
 const CSV_FORMULA_PREFIXES = ["=", "+", "-", "@"];
 
@@ -92,4 +92,25 @@ export function downloadBlob(
   anchor.download = filename;
   anchor.click();
   URL.revokeObjectURL(url);
+}
+
+export function urlsToTxt(records: UrlRecord[]): string {
+  return records.map((r) => r.url).join("\n");
+}
+
+export function urlsToCsv(records: UrlRecord[]): string {
+  const header = "url,count,firstIndex";
+  const rows = records.map((r) => {
+    const safeUrl = sanitizeCsvCell(r.url);
+    const escaped =
+      safeUrl.includes(",") || safeUrl.includes('"') || safeUrl.includes("\n")
+        ? `"${safeUrl.replace(/"/g, '""')}"`
+        : safeUrl;
+    return `${escaped},${r.count},${r.firstIndex}`;
+  });
+  return [header, ...rows].join("\n");
+}
+
+export function urlsToJson(records: UrlRecord[]): string {
+  return JSON.stringify(records, null, 2);
 }

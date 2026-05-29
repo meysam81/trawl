@@ -22,7 +22,8 @@
     "strict": true,
     "target": "ESNext",
     "types": [
-      "chrome"
+      "chrome",
+      "bun"
     ],
     "verbatimModuleSyntax": true
   },

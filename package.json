@@ -22,6 +22,7 @@
     "build": "vite build",
     "check": "oxlint --fix --fix-suggestions && knip",
     "start": "vite",
+    "test": "bun test",
     "typecheck": "bunx tsc --noEmit"
   },
   "type": "module",

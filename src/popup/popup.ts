@@ -19,6 +19,9 @@ import {
   toTabSeparated,
   toVCard,
   downloadBlob,
+  urlsToTxt,
+  urlsToCsv,
+  urlsToJson,
 } from "../lib/export.ts";
 import {
   extractSocialLinks,
@@ -26,7 +29,15 @@ import {
   detectRelatedPages,
   fetchDomainInfo,
 } from "../lib/page-intelligence.ts";
-import type { EmailRecord } from "../lib/schemas.ts";
+import type {
+  EmailRecord,
+  UrlRecord,
+  UrlSettings,
+  UrlSortMode,
+  UrlSourceMode,
+  UrlVisibilityMode,
+} from "../lib/schemas.ts";
+import { sortUrls } from "../lib/url-extract.ts";
 import log from "../lib/logger.ts";
 
 const runBtn = document.getElementById("run") as HTMLButtonElement;
@@ -497,3 +508,242 @@ blocklistEl.addEventListener("change", async () => {
   s.blocklist = parseDomainList(blocklistEl.value);
   await saveSettings(s);
 });
+
+// =============================================================================
+// URLs section
+// =============================================================================
+
+const urlsCountEl = document.getElementById("urls-count") as HTMLSpanElement;
+const urlsRunBtn = document.getElementById("urls-run") as HTMLButtonElement;
+const urlsSortAlphaBtn = document.getElementById(
+  "urls-sort-alpha",
+) as HTMLButtonElement;
+const urlsSortPageBtn = document.getElementById(
+  "urls-sort-page",
+) as HTMLButtonElement;
+const urlsFilterToggleBtn = document.getElementById(
+  "urls-filter-toggle",
+) as HTMLButtonElement;
+const urlsFiltersEl = document.getElementById("urls-filters") as HTMLDivElement;
+const urlsVisibilitySelect = document.getElementById(
+  "urls-visibility",
+) as HTMLSelectElement;
+const urlsSourceSelect = document.getElementById(
+  "urls-source",
+) as HTMLSelectElement;
+const urlsCopyBtn = document.getElementById("urls-copy") as HTMLButtonElement;
+const urlsExportSelect = document.getElementById(
+  "urls-export",
+) as HTMLSelectElement;
+const urlsListEl = document.getElementById("urls-list") as HTMLDivElement;
+const urlsEmptyEl = document.getElementById("urls-empty") as HTMLDivElement;
+
+let urlsLastResult: UrlRecord[] = [];
+let urlsCurrentSettings: UrlSettings = {
+  visibilityMode: "visible",
+  sourceMode: "comprehensive",
+  sortMode: "alpha",
+};
+
+function applySortButtonsActive(mode: UrlSortMode): void {
+  urlsSortAlphaBtn.classList.toggle("active", mode === "alpha");
+  urlsSortPageBtn.classList.toggle("active", mode === "pageOrder");
+}
+
+function renderUrlsList(): void {
+  const sorted = sortUrls(urlsLastResult, urlsCurrentSettings.sortMode);
+  urlsListEl.replaceChildren();
+  if (sorted.length === 0) {
+    urlsListEl.hidden = true;
+    urlsEmptyEl.hidden = false;
+    urlsEmptyEl.textContent =
+      urlsLastResult.length === 0
+        ? "Click Extract to scan this page."
+        : "No URLs match the current filter.";
+    return;
+  }
+  urlsEmptyEl.hidden = true;
+  urlsListEl.hidden = false;
+
+  for (const record of sorted) {
+    const row = document.createElement("div");
+    row.className = "urls-row";
+
+    const link = document.createElement("a");
+    link.className = "urls-row-link";
+    link.href = record.url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.title = record.url;
+    link.textContent = record.url;
+    row.append(link);
+
+    if (record.count > 1) {
+      const countSpan = document.createElement("span");
+      countSpan.className = "urls-row-count";
+      countSpan.textContent = `\u00d7${record.count}`;
+      row.append(countSpan);
+    }
+
+    const copyBtn = document.createElement("button");
+    copyBtn.type = "button";
+    copyBtn.className = "urls-row-copy";
+    copyBtn.title = "Copy this URL";
+    copyBtn.textContent = "\u29c9";
+    copyBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      navigator.clipboard
+        .writeText(record.url)
+        .catch((err: unknown) => log.warn("URL copy failed:", err));
+      copyBtn.classList.add("copied");
+      setTimeout(() => copyBtn.classList.remove("copied"), 1000);
+    });
+    row.append(copyBtn);
+
+    urlsListEl.append(row);
+  }
+}
+
+function renderUrlsHeader(): void {
+  urlsCountEl.textContent =
+    urlsLastResult.length > 0 ? String(urlsLastResult.length) : "";
+}
+
+async function persistUrlSettings(): Promise<void> {
+  const s = await getSettings();
+  s.url = urlsCurrentSettings;
+  await saveSettings(s);
+}
+
+async function runUrlExtraction(): Promise<void> {
+  const [tab] = await chrome.tabs.query({
+    active: true,
+    currentWindow: true,
+  });
+  if (!tab?.id) {
+    urlsEmptyEl.hidden = false;
+    urlsEmptyEl.textContent = "No active tab.";
+    return;
+  }
+  urlsRunBtn.classList.add("loading");
+  urlsRunBtn.textContent = "Scanning\u2026";
+  try {
+    const response = (await chrome.tabs.sendMessage(tab.id, {
+      type: "EXTRACT_URLS",
+      visibilityMode: urlsCurrentSettings.visibilityMode,
+      sourceMode: urlsCurrentSettings.sourceMode,
+    })) as { urls: UrlRecord[] } | undefined;
+    urlsLastResult = response?.urls ?? [];
+  } catch (err) {
+    log.warn("URL extraction failed:", err);
+    urlsLastResult = [];
+    urlsEmptyEl.hidden = false;
+    urlsEmptyEl.textContent =
+      "Cannot access this page. Reload the tab and try again.";
+  }
+  urlsRunBtn.classList.remove("loading");
+  urlsRunBtn.textContent = "Extract";
+  renderUrlsHeader();
+  renderUrlsList();
+}
+
+urlsRunBtn.addEventListener("click", () => {
+  runUrlExtraction().catch((err: unknown) =>
+    log.warn("URL run handler failed:", err),
+  );
+});
+
+urlsSortAlphaBtn.addEventListener("click", () => {
+  urlsCurrentSettings = { ...urlsCurrentSettings, sortMode: "alpha" };
+  applySortButtonsActive("alpha");
+  renderUrlsList();
+  persistUrlSettings().catch((err: unknown) =>
+    log.warn("Persist sort failed:", err),
+  );
+});
+
+urlsSortPageBtn.addEventListener("click", () => {
+  urlsCurrentSettings = { ...urlsCurrentSettings, sortMode: "pageOrder" };
+  applySortButtonsActive("pageOrder");
+  renderUrlsList();
+  persistUrlSettings().catch((err: unknown) =>
+    log.warn("Persist sort failed:", err),
+  );
+});
+
+urlsFilterToggleBtn.addEventListener("click", () => {
+  const willOpen = urlsFiltersEl.hidden as boolean;
+  urlsFiltersEl.hidden = !willOpen;
+  urlsFilterToggleBtn.classList.toggle("active", willOpen);
+});
+
+urlsVisibilitySelect.addEventListener("change", () => {
+  urlsCurrentSettings = {
+    ...urlsCurrentSettings,
+    visibilityMode: urlsVisibilitySelect.value as UrlVisibilityMode,
+  };
+  persistUrlSettings()
+    .then(() => runUrlExtraction())
+    .catch((err: unknown) =>
+      log.warn("Persist+rerun (visibility) failed:", err),
+    );
+});
+
+urlsSourceSelect.addEventListener("change", () => {
+  urlsCurrentSettings = {
+    ...urlsCurrentSettings,
+    sourceMode: urlsSourceSelect.value as UrlSourceMode,
+  };
+  persistUrlSettings()
+    .then(() => runUrlExtraction())
+    .catch((err: unknown) => log.warn("Persist+rerun (source) failed:", err));
+});
+
+urlsCopyBtn.addEventListener("click", () => {
+  if (urlsLastResult.length === 0) {
+    return;
+  }
+  const sorted = sortUrls(urlsLastResult, urlsCurrentSettings.sortMode);
+  navigator.clipboard
+    .writeText(sorted.map((r) => r.url).join("\n"))
+    .catch((err: unknown) => log.warn("URL copy-all failed:", err));
+  urlsCopyBtn.textContent = "Copied!";
+  urlsCopyBtn.classList.add("copied");
+  setTimeout(() => {
+    urlsCopyBtn.textContent = "Copy";
+    urlsCopyBtn.classList.remove("copied");
+  }, 1200);
+});
+
+urlsExportSelect.addEventListener("change", () => {
+  const format = urlsExportSelect.value;
+  if (urlsLastResult.length === 0 || !format) {
+    urlsExportSelect.value = "";
+    return;
+  }
+  const sorted = sortUrls(urlsLastResult, urlsCurrentSettings.sortMode);
+  switch (format) {
+    case "txt":
+      downloadBlob(urlsToTxt(sorted), "trawl-urls.txt", "text/plain");
+      break;
+    case "csv":
+      downloadBlob(urlsToCsv(sorted), "trawl-urls.csv", "text/csv");
+      break;
+    case "json":
+      downloadBlob(urlsToJson(sorted), "trawl-urls.json", "application/json");
+      break;
+    default:
+      break;
+  }
+  urlsExportSelect.value = "";
+});
+
+(async () => {
+  const settings = await getSettings();
+  urlsCurrentSettings = settings.url;
+  urlsVisibilitySelect.value = urlsCurrentSettings.visibilityMode;
+  urlsSourceSelect.value = urlsCurrentSettings.sourceMode;
+  applySortButtonsActive(urlsCurrentSettings.sortMode);
+  urlsEmptyEl.hidden = false;
+  urlsListEl.hidden = true;
+})().catch((err: unknown) => log.warn("Failed to load URL settings:", err));

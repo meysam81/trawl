@@ -106,6 +106,11 @@ export async function getSettings(): Promise<Settings> {
     shortcuts: {},
     allowlist: [],
     blocklist: [],
+    url: {
+      visibilityMode: "visible",
+      sourceMode: "comprehensive",
+      sortMode: "alpha",
+    },
   };
 }
 

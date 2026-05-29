@@ -55,6 +55,74 @@
 
     <div class="extras" id="extras"></div>
 
+    <details class="discovery-panel" id="urls-panel">
+      <summary class="discovery-toggle">
+        URLs on Page
+        <span class="badge urls-count" id="urls-count"></span>
+      </summary>
+      <div class="discovery-content">
+        <div class="urls-toolbar">
+          <button id="urls-run" class="btn btn-sm urls-run-btn">Extract</button>
+          <div class="urls-sort" role="group" aria-label="Sort URLs">
+            <button
+              type="button"
+              id="urls-sort-alpha"
+              class="urls-sort-btn"
+              data-mode="alpha"
+            >
+              A&ndash;Z
+            </button>
+            <button
+              type="button"
+              id="urls-sort-page"
+              class="urls-sort-btn"
+              data-mode="pageOrder"
+            >
+              Page
+            </button>
+          </div>
+          <button
+            type="button"
+            id="urls-filter-toggle"
+            class="urls-filter-toggle"
+            aria-label="Filters"
+            title="Filters"
+          >
+            &#9881;
+          </button>
+          <button id="urls-copy" class="urls-copy-btn">Copy</button>
+          <select id="urls-export" class="export-select urls-export">
+            <option value="" disabled selected>Export</option>
+            <option value="txt">TXT</option>
+            <option value="csv">CSV</option>
+            <option value="json">JSON</option>
+          </select>
+        </div>
+        <div class="urls-filters" id="urls-filters" hidden>
+          <label class="urls-filter-row">
+            <span class="discovery-label">Visibility</span>
+            <select id="urls-visibility" class="urls-filter-select">
+              <option value="visible">Visible (default)</option>
+              <option value="all">All (incl. hidden)</option>
+              <option value="viewport">In viewport only</option>
+            </select>
+          </label>
+          <label class="urls-filter-row">
+            <span class="discovery-label">Sources</span>
+            <select id="urls-source" class="urls-filter-select">
+              <option value="anchors">Anchors only</option>
+              <option value="comprehensive">Comprehensive (default)</option>
+              <option value="everything">Everything (incl. head)</option>
+            </select>
+          </label>
+        </div>
+        <div id="urls-list" class="urls-list" hidden></div>
+        <div id="urls-empty" class="empty urls-empty" hidden>
+          Click Extract to scan this page.
+        </div>
+      </div>
+    </details>
+
     <details class="discovery-panel" id="discovery-panel">
       <summary class="discovery-toggle">Discover contacts</summary>
       <div class="discovery-content">
