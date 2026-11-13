@@ -1,11 +1,11 @@
 repos:
   - repo: https://github.com/oxc-project/mirrors-oxlint
-    rev: v1.52.0
+    rev: 58bd4c1c837e2c8974e3560b1cdc2ef5df179ac2 # frozen: v1.52.0
     hooks:
       - id: oxlint
         verbose: false
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: check-added-large-files
         args: ["--maxkb=5000"]
@@ -52,13 +52,14 @@ repos:
           )$
       - id: trailing-whitespace
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
-    rev: v9.24.0
+    rev: 1f6454da22d006d5bb0d2e65c96c43c23c8a534f # frozen: v9.24.0
     hooks:
       - id: commitlint
+        language: node
         stages: [commit-msg]
-        additional_dependencies: ["@commitlint/config-conventional"]
+        additional_dependencies: ["@commitlint/config-conventional@21.2.4"]
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.11
+    rev: 393031adb9afb225ee52ae2ccd7a5af5525e03e8 # frozen: v1.7.11
     hooks:
       - id: actionlint
   - repo: local

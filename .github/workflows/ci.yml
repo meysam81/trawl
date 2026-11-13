@@ -95,8 +95,11 @@ jobs:
           name: ${{ needs.build.outputs.artifact-name }}
           path: dist
       - name: Install crx3
+        env:
+          # renovate: go=github.com/mediabuyerbot/go-crx3
+          CRX3_VERSION: v1.7.1
         run: |
-          go install github.com/mediabuyerbot/go-crx3/crx3@latest
+          go install "github.com/mediabuyerbot/go-crx3/crx3@${CRX3_VERSION}"
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - name: Write signing key
         env:
