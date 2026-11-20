@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/oxc-project/mirrors-oxlint
-    rev: 58bd4c1c837e2c8974e3560b1cdc2ef5df179ac2 # frozen: v1.52.0
+    rev: 50c9254f606c6121317d2290079442d162224224 # frozen: v1.92.0
     hooks:
       - id: oxlint
         verbose: false
@@ -52,14 +52,14 @@ repos:
           )$
       - id: trailing-whitespace
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
-    rev: 1f6454da22d006d5bb0d2e65c96c43c23c8a534f # frozen: v9.24.0
+    rev: 1f1ac45c93d1c2ce36b71330252c489a5f4f2724 # frozen: v9.27.0
     hooks:
       - id: commitlint
         language: node
         stages: [commit-msg]
         additional_dependencies: ["@commitlint/config-conventional@21.2.4"]
   - repo: https://github.com/rhysd/actionlint
-    rev: 393031adb9afb225ee52ae2ccd7a5af5525e03e8 # frozen: v1.7.11
+    rev: 914e7df21a07ef503a81201c76d2b11c789d3fca # frozen: v1.7.12
     hooks:
       - id: actionlint
   - repo: local
